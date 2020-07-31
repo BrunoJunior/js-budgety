@@ -35,8 +35,25 @@ const DOM_STRINGS = {
  * @type {{exp: string, inc: string}}
  */
 const HTML_TEMPLATES = {
-    inc: '<div class="item clearfix" id="inc-{{id}}"><div class="item__description">{{desc}}</div><div class="right clearfix"><div class="item__value">+ {{val}}</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>',
-    exp: '<div class="item clearfix" id="exp-{{id}}"><div class="item__description">{{desc}}</div><div class="right clearfix"><div class="item__value">- {{val}}</div><div class="item__percentage">{{pct}}%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>',
+    inc: `<div class="item clearfix" id="inc-{{id}}">
+            <div class="item__description">{{desc}}</div>
+            <div class="right clearfix">
+                <div class="item__value">+ {{val}}</div>
+                <div class="item__delete">
+                    <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                </div>
+            </div>
+          </div>`,
+    exp: `<div class="item clearfix" id="exp-{{id}}">
+            <div class="item__description">{{desc}}</div>
+            <div class="right clearfix">
+                <div class="item__value">- {{val}}</div>
+                <div class="item__percentage">{{pct}}%</div>
+                <div class="item__delete">
+                    <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                </div>
+            </div>
+          </div>`,
 };
 
 /**
@@ -58,13 +75,12 @@ function displayPercentage(el, value) {
 
 /**
  * The UI controller
- * @type {{updatePercentages: UIController.updatePercentages, updateBudget: UIController.updateBudget, changedType: UIController.changedType, clearFields: UIController.clearFields, displayMonth: UIController.displayMonth, domStrings: {input: {val: string, type: string, desc: string}, containers: {exp: string, inc: string, parent: string}, totals: {balance: string, percentage: string, exp: string, inc: string}, btn: {add: string}}, getInput: (function(): {description: *, type: *, value: *}), addListItem: UIController.addListItem}}
  */
 export const UIController = {
     /**
      * @returns {{description: string, type: 'inc'|'exp', value: string}}
      */
-    getInput: function () {
+    getInput: () => {
         const inputSelectors = DOM_STRINGS.input;
         return {
             type: document.querySelector(inputSelectors.type).value, // inc or exp
@@ -86,7 +102,7 @@ export const UIController = {
      * @param {'inc'|'exp'} type
      * @param {number|undefined} percentage
      */
-    addListItem: function (item, type, percentage) {
+    addListItem: (item, type, percentage) => {
         const newHtml = HTML_TEMPLATES[type].replace('{{id}}', item.id)
             .replace('{{desc}}', item.description)
             .replace('{{val}}', item.value.toLocaleString(undefined, LOCAL_OPTIONS))
@@ -96,7 +112,7 @@ export const UIController = {
     /**
      * @param budget {{totalInc: number, totalExp: number, balance: number, percentage: number|undefined}}
      */
-    updateBudget: function (budget) {
+    updateBudget: budget => {
         refreshTotal('balance', budget.balance);
         refreshTotal('exp', -budget.totalExp);
         refreshTotal('inc', budget.totalInc);
@@ -105,32 +121,30 @@ export const UIController = {
     /**
      * Clear the input fields
      */
-    clearFields: function () {
+    clearFields: () => {
         const fields = document.querySelectorAll([DOM_STRINGS.input.val, DOM_STRINGS.input.desc].join(', '));
-        fields.forEach(function (node) {node.value = '';});
+        fields.forEach(node => node.value = '');
         fields.item(0).focus();
     },
     /**
      * @param {Array<Expense>} expenses
      */
-    updatePercentages: function (expenses) {
-        expenses.forEach(function (exp) {
-            displayPercentage(document.querySelector(`#exp-${exp.id} .item__percentage`), exp.getPercentage());
-        });
-    },
+    updatePercentages: expenses =>
+        expenses.forEach(exp =>
+            displayPercentage(document.querySelector(`#exp-${exp.id} .item__percentage`), exp.getPercentage())),
     /**
      * Display the current month of the current year
      */
-    displayMonth: function () {
+    displayMonth: () => {
         const now = new Date();
         document.querySelector(DOM_STRINGS.title.month).textContent = `${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
     },
     /**
      * The input type has changed (switched between expense and income)
      */
-    changedType: function () {
+    changedType: () => {
         document.querySelectorAll(`${DOM_STRINGS.input.type},${DOM_STRINGS.input.desc},${DOM_STRINGS.input.val}`)
-            .forEach(function (el) {el.classList.toggle('red-focus')});
+            .forEach(el => el.classList.toggle('red-focus'));
         document.querySelector(DOM_STRINGS.btn.add).classList.toggle('red');
     },
 };

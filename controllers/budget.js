@@ -108,7 +108,7 @@ export const BudgetController = {
      * @returns {Expense|Income}
      * @throws Error
      */
-    addItem: function (input) {
+    addItem: input => {
         /**
          * The container depends on the data type
          * @var {Value[]}
@@ -136,7 +136,7 @@ export const BudgetController = {
      * @param {'exp'|'inc'} type
      * @returns {undefined|Value}
      */
-    removeItem: function(id, type) {
+    removeItem: (id, type) => {
         /**
          * @var {Array<Value>}
          */
@@ -160,27 +160,21 @@ export const BudgetController = {
      * Getting the budget
      * @return {{balance: number, percentage: (number|undefined), totalInc: number, totalExp: number}}
      */
-    getBudget: function () {
-        return {
+    getBudget: () => ({
             totalInc: data.totals['inc'],
             totalExp: data.totals['exp'],
             balance: data.balance,
             percentage: data.percentage,
-        };
-    },
+        }),
     /**
      * Getting the percentage of an item
      * @param {Value} item
      * @return {number|undefined}
      */
-    getPercentage: function (item) {
-        return calculatePct(item.value);
-    },
+    getPercentage: item => calculatePct(item.value),
     /**
      * Calculate the expenses percentage
      * @return {Array<Expense>}
      */
-    getExpenses: function () {
-        return [...data.items.exp];
-    }
+    getExpenses: ()  => [...data.items.exp],
 };

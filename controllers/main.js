@@ -34,7 +34,7 @@ function getItem(event) {
  */
 function setupEventListeners() {
     document.querySelector(UIController.domStrings.btn.add).addEventListener('click', ctrlAddItem);
-    document.addEventListener('keydown', function (ev) {
+    document.addEventListener('keydown', ev => {
         if (ev.key !== 'Enter') {
             return;
         }
@@ -87,7 +87,7 @@ function ctrlRemoveItem(event) {
 }
 
 export const Controller = {
-    init: function () {
+    init: () => {
         UIController.displayMonth();
         updateUI();
         setupEventListeners();
